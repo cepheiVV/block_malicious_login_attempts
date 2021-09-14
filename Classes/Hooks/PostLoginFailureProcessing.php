@@ -23,13 +23,12 @@ declare(strict_types=1);
 
 namespace ITSC\BlockMaliciousLoginAttempts\Hooks;
 
-
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 
-class PostLoginFailureProcessing {
-
+class PostLoginFailureProcessing
+{
     /**
      * @param array $params
      * @param BackendUserAuthentication $parent

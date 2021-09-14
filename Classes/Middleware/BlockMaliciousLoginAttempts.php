@@ -30,7 +30,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
-use ITSC\BlockMaliciousLoginAttempts\Utility\TypoScriptUtility;
 
 /**
  * Class BlockMaliciousLoginAttempts
