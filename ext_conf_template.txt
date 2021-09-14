@@ -1,0 +1,6 @@
+
+# cat=basic/enable/050; type=int; label=Number of allowed login attempts before access gets blocked
+failedLoginLimit = 3
+
+# cat=basic/enable/050; type=string; label=Message when login is locked
+lockMessage = Access blocked, contact your website administration.
