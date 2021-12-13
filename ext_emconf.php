@@ -18,6 +18,6 @@ $EM_CONF[$_EXTKEY] = [
     'uploadfolder' => 0,
     'createDirs' => '',
     'clearCacheOnLoad' => 1,
-    'version' => '1.1.0',
+    'version' => '1.2.0',
 ];
 
