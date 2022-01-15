@@ -17,12 +17,16 @@
     }
   ],
   "require": {
-    "typo3/cms-core": "^9.5 || ^10.4"
+    "typo3/cms-core": "^9.5 || ^10.4 || ^11.5"
   },
   "autoload": {
     "psr-4": {
       "ITSC\\BlockMaliciousLoginAttempts\\": "Classes/"
     }
+  },
+  "extra": {
+    "typo3/cms": {
+      "extension-key": "block_malicious_login_attempts"
+    }
   }
 }
-

@@ -23,30 +23,36 @@ declare(strict_types=1);
 
 namespace ITSC\BlockMaliciousLoginAttempts\Hooks;
 
+use Doctrine\DBAL\DBALException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 
+/**
+ * PostLoginFailureProcessing
+ */
 class PostLoginFailureProcessing
 {
     /**
+     * @var string
+     */
+    protected $table = "tx_blockmaliciousloginattempts_failed_login";
+
+    /**
+     * get the IP of user if a BE login attempt fails and saves the IP into the DB
+     *
      * @param array $params
      * @param BackendUserAuthentication $parent
+     * @throws DBALException
      */
     public function saveFailedLoginAttempt(array $params, BackendUserAuthentication $parent)
     {
         if ($parent->loginFailure) {
-            // get IP of user
             $ip = GeneralUtility::getIndpEnv('REMOTE_ADDR');
 
-            // save login attempt to DB
-            $table = "tx_blockmaliciousloginattempts_failed_login";
-            $queryBuilder = GeneralUtility::makeInstance(
-                ConnectionPool::class
-            )->getQueryBuilderForTable($table);
-
+            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->table);
             $queryBuilder
-                ->insert($table)
+                ->insert($this->table)
                 ->values([
                     'ip' => $ip,
                     'time' => time(),
