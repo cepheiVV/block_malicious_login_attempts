@@ -6,7 +6,7 @@ $EM_CONF[$_EXTKEY] = [
     'category' => 'misc',
     'constraints' => [
         'depends' => [
-            'typo3' => '10.4'
+            'typo3' => '9.5 || 10.4 || 11.5'
         ]
     ],
     'autoload' => [
@@ -15,9 +15,7 @@ $EM_CONF[$_EXTKEY] = [
         ],
     ],
     'state' => 'stable',
-    'uploadfolder' => 0,
-    'createDirs' => '',
-    'clearCacheOnLoad' => 1,
-    'version' => '1.1.0',
+    'clearCacheOnLoad' => true,
+    'version' => '1.3.0',
 ];
 
