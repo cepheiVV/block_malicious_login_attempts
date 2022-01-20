@@ -1,0 +1,79 @@
+<html
+        xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+        xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+        xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+        data-namespace-typo3-fluid="true">
+
+<f:be.container>
+
+    <div class="module">
+
+        <f:render partial="Header" arguments="{_all}" />
+
+        <div class="module-body t3js-module-body" style="padding-top: 89px;">
+
+            <h1>Blocked IP List</h1>
+
+            <f:render section="Info" arguments="{_all}" />
+            <f:render section="Content" arguments="{_all}" />
+
+        </div>
+    </div>
+
+
+</f:be.container>
+
+
+<f:section name="Info">
+    <div class="alert alert-info">
+        <p>
+            The limit for failed login attempts per IP is set to {failedLoginLimit}.
+        </p>
+    </div>
+</f:section>
+
+<f:section name="Content">
+    <table class="table table-striped">
+        <tr>
+            <th>#</th>
+            <th>IP</th>
+            <th>Failed login attempts</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        <f:for each="{ipList}" as="item" iteration="i">
+            <tr>
+                <td>{i.cycle}</td>
+                <td>{item.ip}</td>
+                <td>{item.count}</td>
+                <td>
+                    <f:if condition="{item.blocked}">
+                        <f:then>
+                            <span class="badge badge-danger">blocked</span>
+                        </f:then>
+                        <f:else>
+                            <span class="badge badge-info">not blocked</span>
+                        </f:else>
+                    </f:if>
+                </td>
+                <td>
+                    <f:if condition="{item.blocked}">
+                        <f:then>
+                            <f:link.action class="btn btn-danger" action="unblock" arguments="{ip: item.ip}">
+                                unblock
+                            </f:link.action>
+                        </f:then>
+                        <f:else>
+                            <f:link.action class="btn btn-warning" action="unblock" arguments="{ip: item.ip}">
+                                reset
+                            </f:link.action>
+                        </f:else>
+                    </f:if>
+                </td>
+            </tr>
+        </f:for>
+    </table>
+</f:section>
+
+</html>
+

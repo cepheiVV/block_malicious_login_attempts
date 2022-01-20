@@ -1,0 +1,10 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+
+<div class="btn-group" role="group" aria-label="Navigation">
+
+    <f:link.action action="index" class="btn btn-{f:if(condition: '{currentPage} == \'index\'', then: 'primary', else: 'default')}">
+        Dashboard
+    </f:link.action>
+
+</div>
+</html>

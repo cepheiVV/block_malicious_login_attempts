@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="messages" date="2021-01-20T14:08:06Z">
+        <header>
+            <authorName>ITS Crausaz</authorName>
+            <authorEmail>info@its-crausaz.ch</authorEmail>
+        </header>
+        <body>
+            <trans-unit id="module.blockedip">
+                <source>Blocked IP</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

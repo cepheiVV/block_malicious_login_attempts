@@ -1,0 +1,13 @@
+module.tx_blockmaliciousloginattempts {
+    view {
+        templateRootPaths {
+            10 = EXT:block_malicious_login_attempts/Resources/Private/Backend/Templates/
+        }
+        partialRootPaths {
+            10 = EXT:block_malicious_login_attempts/Resources/Private/Backend/Partials/
+        }
+        layoutRootPaths {
+            10 = EXT:block_malicious_login_attempts/Resources/Private/Backend/Layouts/
+        }
+    }
+}
