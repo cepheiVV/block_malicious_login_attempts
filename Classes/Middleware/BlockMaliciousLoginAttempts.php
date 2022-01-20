@@ -64,11 +64,12 @@ class BlockMaliciousLoginAttempts implements MiddlewareInterface
     {
         if ($this->isLoginInProgress($request)) {
 
-            $ipIsBlocked = $this->testIpAgainstMaliciousIpList(
-                $request->getAttribute('normalizedParams')->getRemoteAddress()
-            );
+            $ip = $request->getAttribute('normalizedParams')->getRemoteAddress();
+            $ipIsBlocked = $this->testIpAgainstMaliciousIpList($ip);
+
             if ($ipIsBlocked) {
                 $message = $this->extensionConfiguration["lockMessage"] ?? "blocked";
+                $message = str_replace("{ip_address}", $ip, $message);
                 exit($message);
             }
 

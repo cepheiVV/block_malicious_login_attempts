@@ -3,4 +3,4 @@
 failedLoginLimit = 3
 
 # cat=basic/enable/050; type=string; label=Message when login is locked
-lockMessage = Access blocked, contact your website administrator
+lockMessage = Your IP address ({ip_address}) has been blocked. Contact your website administration.
