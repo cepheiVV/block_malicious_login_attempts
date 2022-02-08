@@ -23,7 +23,11 @@ class BlockedIpController extends ActionController
     {
         $extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('block_malicious_login_attempts');
         $failedLoginLimit = $extensionConfiguration["failedLoginLimit"];
-        $failedLoginTime = $extensionConfiguration["failedLoginTime"];
+        
+        $failedLoginTime = 0;
+        if(isset($extensionConfiguration["failedLoginTime"])) {
+            $failedLoginTime = $extensionConfiguration["failedLoginTime"];
+        }
 
         // get all IP's that reached the limit
         $table = "tx_blockmaliciousloginattempts_failed_login";
