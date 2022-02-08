@@ -17,7 +17,7 @@ class BlockedIpController extends ActionController
 {
 
     /**
-     *
+     * index action
      */
     public function indexAction()
     {
@@ -36,7 +36,8 @@ class BlockedIpController extends ActionController
             ->from($table)
             ->addSelectLiteral('COUNT(ip) as count')
             ->addSelectLiteral('COUNT(ip) >= "'.$failedLoginLimit.'" as blocked');
-        if($failedLoginTime > 0){
+
+        if ($failedLoginTime > 0) {
             $queryBuilder->addSelectLiteral('count(CASE WHEN time BETWEEN "'.(time()-$failedLoginTime).'" AND "'.time().'" THEN 1 END) as timedFails');
         }
             

@@ -2,7 +2,7 @@
 # cat=basic/enable/050; type=int; label=Number of allowed login attempts before access gets blocked
 failedLoginLimit = 3
 
-# cat=basic/enable/050; type=int; label=Max IP age, 0 to block forever
+# cat=basic/enable/050; type=int; label=Max IP age in seconds. Blocked IPs will be eligible for backend logins again after the time has elapsed. Set to 0 to block forever.
 failedLoginTime = 0
 
 # cat=basic/enable/050; type=string; label=Message when login is locked
