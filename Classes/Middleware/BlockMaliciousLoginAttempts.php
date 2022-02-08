@@ -87,19 +87,25 @@ class BlockMaliciousLoginAttempts implements MiddlewareInterface
     protected function testIpAgainstMaliciousIpList($ip): bool
     {
         $failedLoginLimit = $this->getFailedLoginLimit();
+        $failedLoginTime = $this->getFailedLoginTime();
+        
         $table = "tx_blockmaliciousloginattempts_failed_login";
         $queryBuilder = GeneralUtility::makeInstance(
             ConnectionPool::class
         )->getQueryBuilderForTable($table);
 
-        $attemptedLogins = $queryBuilder
+        $queryBuilder
             ->count('uid')
             ->from($table)
             ->where(
                 $queryBuilder->expr()->eq('ip', $queryBuilder->createNamedParameter($ip))
-            )
-            ->execute()
-            ->fetchColumn(0);;
+            );
+        if($failedLoginTime > 0){
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->gte('time', (time()-$failedLoginTime) )
+            );
+        }
+        $attemptedLogins = $queryBuilder->execute()->fetchColumn(0);
 
         return $attemptedLogins >= $failedLoginLimit;
     }
@@ -126,5 +132,14 @@ class BlockMaliciousLoginAttempts implements MiddlewareInterface
     {
         $failedLoginLimit = $this->extensionConfiguration["failedLoginLimit"] ?? 3;
         return (int)$failedLoginLimit;
+    }
+
+    /**
+     * @return int
+     */
+    protected function getFailedLoginTime(): int
+    {
+        $failedLoginTime = $this->extensionConfiguration["failedLoginTime"] ?? 0;
+        return (int)$failedLoginTime;
     }
 }
