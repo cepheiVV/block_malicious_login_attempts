@@ -9,6 +9,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 
+
 /**
  * BlockedIpController
  */
@@ -22,19 +23,30 @@ class BlockedIpController extends ActionController
     {
         $extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('block_malicious_login_attempts');
         $failedLoginLimit = $extensionConfiguration["failedLoginLimit"];
+        
+        $failedLoginTime = 0;
+        if(isset($extensionConfiguration["failedLoginTime"])) {
+            $failedLoginTime = $extensionConfiguration["failedLoginTime"];
+        }
 
         // get all IP's that reached the limit
         $table = "tx_blockmaliciousloginattempts_failed_login";
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($table);
-        $sql = "SELECT ip, COUNT(ip) as count, COUNT(ip) >= ".$failedLoginLimit." as blocked 
-                FROM tx_blockmaliciousloginattempts_failed_login 
-                WHERE 1=1 
-                GROUP BY ip
-                ORDER BY count DESC;";
-        $ipList = $queryBuilder->getConnection()->prepare($sql)->executeQuery()->fetchAll();
+        $queryBuilder->select('ip')
+            ->from($table)
+            ->addSelectLiteral('COUNT(ip) as count')
+            ->addSelectLiteral('COUNT(ip) >= "'.$failedLoginLimit.'" as blocked');
+        if($failedLoginTime > 0){
+            $queryBuilder->addSelectLiteral('count(CASE WHEN time BETWEEN "'.(time()-$failedLoginTime).'" AND "'.time().'" THEN 1 END) as timedFails');
+        }
+            
+        $queryBuilder->orderBy('count', 'DESC');
+
+        $ipList = $queryBuilder->groupBy('ip')->execute()->fetchAll();
 
         $this->view->assign("ipList", $ipList);
         $this->view->assign("failedLoginLimit", $failedLoginLimit);
+        $this->view->assign("failedLoginTime", $failedLoginTime);
         $this->view->assign("currentPage", "index");
     }
 
