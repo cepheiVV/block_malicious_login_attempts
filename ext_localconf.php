@@ -1,5 +1,7 @@
 <?php
-defined('TYPO3') or die();
+
+defined('TYPO3_MODE') or die();
+
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 

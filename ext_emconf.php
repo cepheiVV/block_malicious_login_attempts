@@ -6,7 +6,7 @@ $EM_CONF[$_EXTKEY] = [
     'category' => 'misc',
     'constraints' => [
         'depends' => [
-            'typo3' => '9.5 || 10.4 || 11.5'
+            'typo3' => '9.5 || 10.4'
         ]
     ],
     'autoload' => [
@@ -16,6 +16,6 @@ $EM_CONF[$_EXTKEY] = [
     ],
     'state' => 'stable',
     'clearCacheOnLoad' => true,
-    'version' => '1.6.0',
+    'version' => '1.7.0',
 ];
 
