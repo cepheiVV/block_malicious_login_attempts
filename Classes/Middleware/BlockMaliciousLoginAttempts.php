@@ -65,9 +65,16 @@ class BlockMaliciousLoginAttempts implements MiddlewareInterface
         if ($this->isLoginInProgress($request)) {
 
             $ip = $request->getAttribute('normalizedParams')->getRemoteAddress();
-            $ipIsBlocked = $this->testIpAgainstMaliciousIpList($ip);
+            $username = GeneralUtility::_POST("username");
 
-            if ($ipIsBlocked) {
+            $ipIsBlocked = $this->testIpAgainstMaliciousAccessList($ip, $username, "ip");
+
+            $usernameBlockList = false;
+            if ($this->getBlockByUsernameSetting()) {
+                $usernameBlockList = $this->testIpAgainstMaliciousAccessList($ip, $username, "username");
+            }
+
+            if ($ipIsBlocked || $usernameBlockList) {
                 $message = $this->extensionConfiguration["lockMessage"] ?? "blocked";
                 $message = str_replace("{ip_address}", $ip, $message);
                 exit($message);
@@ -81,30 +88,44 @@ class BlockMaliciousLoginAttempts implements MiddlewareInterface
     /**
      * check whether the ip is blocked
      *
-     * @param $ip
+     * @param string $ip
+     * @param string $username
+     * @param string $groupBy
      * @return bool
      */
-    protected function testIpAgainstMaliciousIpList($ip): bool
+    protected function testIpAgainstMaliciousAccessList(string $ip, string $username, string $groupBy): bool
     {
         $failedLoginLimit = $this->getFailedLoginLimit();
         $failedLoginTime = $this->getFailedLoginTime();
+        $blockByUsername = $this->getBlockByUsernameSetting();
         
         $table = "tx_blockmaliciousloginattempts_failed_login";
         $queryBuilder = GeneralUtility::makeInstance(
             ConnectionPool::class
         )->getQueryBuilderForTable($table);
 
-        $queryBuilder
-            ->count('uid')
-            ->from($table)
-            ->where(
+        $queryBuilder->count('uid')->from($table);
+
+        if ($blockByUsername & $groupBy == "username") {
+            // block access by testing against IP and username
+            $queryBuilder->where(
+                $queryBuilder->expr()->eq('username', $queryBuilder->createNamedParameter($username))
+            );
+        } else {
+            // Only block access by testing against IP address
+            $queryBuilder->where(
                 $queryBuilder->expr()->eq('ip', $queryBuilder->createNamedParameter($ip))
             );
+        }
+
         if($failedLoginTime > 0){
             $queryBuilder->andWhere(
                 $queryBuilder->expr()->gte('time', (time()-$failedLoginTime) )
             );
         }
+
+        $queryBuilder->groupBy($groupBy);
+
         $attemptedLogins = $queryBuilder->execute()->fetchColumn(0);
 
         return $attemptedLogins >= $failedLoginLimit;
@@ -142,4 +163,15 @@ class BlockMaliciousLoginAttempts implements MiddlewareInterface
         $failedLoginTime = $this->extensionConfiguration["failedLoginTime"] ?? 0;
         return (int)$failedLoginTime;
     }
+
+    /**
+     * @return bool
+     */
+    protected function getBlockByUsernameSetting(): bool
+    {
+        $blockByUsername = $this->extensionConfiguration["blockByUsername"] ?? 0;
+        return (bool)$blockByUsername;
+    }
+
+
 }

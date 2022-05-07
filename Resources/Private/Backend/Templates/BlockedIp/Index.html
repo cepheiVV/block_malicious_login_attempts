@@ -12,7 +12,7 @@
 
         <div class="module-body t3js-module-body" style="padding-top: 89px;">
 
-            <h1>Blocked IP List</h1>
+            <h1>Blocked Access List</h1>
 
             <f:render section="Info" arguments="{_all}" />
             <f:render section="Content" arguments="{_all}" />
@@ -30,16 +30,42 @@
             The limit for failed login attempts per IP is set to {failedLoginLimit}.
         </p>
         <f:if condition="{failedLoginTime}">
-            The age limit for failed login attempts is set to {failedLoginTime} seconds.
+            <p>
+                The age limit for failed login attempts is set to {failedLoginTime} seconds.
+            </p>
+        </f:if>
+        <f:if condition="{blockByUsername}">
+            <p>
+                Login attempts are not only blocked by IP address, but also by the username.
+            </p>
         </f:if>
     </div>
 </f:section>
 
 <f:section name="Content">
+
+    <div class="access-list-ip">
+        <h3>List by IP Address</h3>
+        <f:render section="AccessList" arguments="{list: ipList, type: 'ip'}" />
+    </div>
+
+    <f:if condition="{blockByUsername}">
+        <div class="access-list-username">
+            <h3>List by Username</h3>
+            <f:render section="AccessList" arguments="{list: usernameList, type: 'username'}" />
+        </div>
+    </f:if>
+</f:section>
+
+
+<f:section name="AccessList">
     <table class="table table-striped">
         <tr>
             <th>#</th>
-            <th>IP</th>
+            <th>
+                <f:if condition="{type} == 'ip'">IP</f:if>
+                <f:if condition="{type} == 'username'">Username</f:if>
+            </th>
             <th>Failed login attempts</th>
             <f:if condition="{failedLoginTime}">
                 <th>Failed login attempts within timelimit</th>
@@ -48,7 +74,7 @@
             <th>Action</th>
         </tr>
 
-        <f:for each="{ipList}" as="item" iteration="i">
+        <f:for each="{list}" as="item" iteration="i">
 
             <f:variable name="itemIsBlocked" value="{item.blocked}" />
             <f:if condition="{failedLoginTime}">
@@ -60,14 +86,16 @@
                         <f:else>
                             <f:variable name="itemIsBlocked" value="0" />
                         </f:else>
-                        
                     </f:if>
                 </f:then>
             </f:if>
 
             <tr>
                 <td>{i.cycle}</td>
-                <td>{item.ip}</td>
+                <td>
+                    <f:if condition="{type} == 'ip'">{item.ip}</f:if>
+                    <f:if condition="{type} == 'username'">{item.username}</f:if>
+                </td>
                 <td>{item.count}</td>
                 <f:if condition="{failedLoginTime}">
                     <td>{item.timedFails}</td>
@@ -83,18 +111,16 @@
                     </f:if>
                 </td>
                 <td>
-                    <f:if condition="{itemIsBlocked}">
-                        <f:then>
-                            <f:link.action class="btn btn-danger" action="unblock" arguments="{ip: item.ip}">
-                                unblock
-                            </f:link.action>
-                        </f:then>
-                        <f:else>
-                            <f:link.action class="btn btn-warning" action="unblock" arguments="{ip: item.ip}">
-                                reset
-                            </f:link.action>
-                        </f:else>
-                    </f:if>
+                    <f:link.action
+                        class="btn btn-{f:if(condition: itemIsBlocked, then: 'danger', else: 'warning')}"
+                        action="unblock"
+                        arguments="{
+                            ip: item.ip,
+                            username: item.username,
+                            type: type
+                        }">
+                        {f:if(condition: itemIsBlocked, then: 'unblock', else: 'reset')}
+                    </f:link.action>
                 </td>
             </tr>
         </f:for>

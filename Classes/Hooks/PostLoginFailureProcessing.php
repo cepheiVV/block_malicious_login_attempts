@@ -49,6 +49,7 @@ class PostLoginFailureProcessing
     {
         if ($parent->loginFailure) {
             $ip = GeneralUtility::getIndpEnv('REMOTE_ADDR');
+            $username = GeneralUtility::_POST("username");
 
             $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->table);
             $queryBuilder
@@ -56,6 +57,7 @@ class PostLoginFailureProcessing
                 ->values([
                     'ip' => $ip,
                     'time' => time(),
+                    'username' => $username
                 ])
                 ->execute();
         }
