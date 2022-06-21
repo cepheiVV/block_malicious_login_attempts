@@ -45,21 +45,23 @@ class PostLoginFailureProcessing
      * @param BackendUserAuthentication $parent
      * @throws DBALException
      */
-    public function saveFailedLoginAttempt(array $params, BackendUserAuthentication $parent)
+    public function saveFailedLoginAttempt(array $params, $parent)
     {
-        if ($parent->loginFailure) {
-            $ip = GeneralUtility::getIndpEnv('REMOTE_ADDR');
-            $username = GeneralUtility::_POST("username");
+        if ($parent instanceof BackendUserAuthentication) {
+            if ($parent->loginFailure) {
+                $ip = GeneralUtility::getIndpEnv('REMOTE_ADDR');
+                $username = GeneralUtility::_POST("username");
 
-            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->table);
-            $queryBuilder
-                ->insert($this->table)
-                ->values([
-                    'ip' => $ip,
-                    'time' => time(),
-                    'username' => $username
-                ])
-                ->execute();
+                $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->table);
+                $queryBuilder
+                    ->insert($this->table)
+                    ->values([
+                        'ip' => $ip,
+                        'time' => time(),
+                        'username' => $username
+                    ])
+                    ->execute();
+            }
         }
     }
 }
